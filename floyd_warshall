@@ -1,0 +1,52 @@
+class Graph:
+    def __init__(self, V):
+        self.V = V
+        self.graph = [[float('inf')] * V for _ in range(V)]
+
+    def add_edge(self, u, v, w):
+        self.graph[u][v] = w
+
+    def floyd_warshall(self):
+        dist = [[0]*self.V for _ in range(self.V)]
+        for i in range(self.V):
+            for j in range(self.V):
+                dist[i][j] = self.graph[i][j]
+
+        for k in range(self.V):
+            for i in range(self.V):
+                for j in range(self.V):
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+        return dist
+
+if __name__ == "__main__":
+    V = int(input("Masukkan jumlah simpul (V): "))
+    graph = Graph(V)
+
+    # Memasukkan sisi graf
+    while True:
+        edge = input("Masukkan sisi graf (format: u v w, ketik 'selesai' untuk mengakhiri): ")
+        if edge.lower() == 'selesai':
+            break
+        u, v, w = map(int, edge.split())
+        graph.add_edge(u, v, w)
+
+    # Proses Floyd-Warshall
+    shortest_paths = graph.floyd_warshall()
+
+    print("Matriks jarak terpendek:")
+    for row in shortest_paths:
+        print(row)
+
+    # Cari jarak terpendek antara dua simpul tertentu
+    while True:
+        start = int(input("Masukkan simpul awal: "))
+        end = int(input("Masukkan simpul tujuan: "))
+        if start < 0 or start >= V or end < 0 or end >= V:
+            print("Simpul tidak valid. Silakan coba lagi.")
+            continue
+        print(f"Jarak terpendek dari simpul {start} ke simpul {end} adalah {shortest_paths[start][end]}")
+
+        lagi = input("Cari jarak terpendek lagi? (y/n): ")
+        if lagi.lower() != 'y':
+            break
